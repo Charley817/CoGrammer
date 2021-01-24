@@ -4,9 +4,9 @@ import java.io.*;
 import java.time.*;
 
 class Account{
-  public int id;
-  public double balance;
-  public Date dateCreated;
+  protected int id;
+  protected double balance;
+  protected Date dateCreated;
 
   Account(int id, double balance){
     this.id = id;
@@ -15,32 +15,32 @@ class Account{
     this.dateCreated = java.sql.Timestamp.valueOf(temp);
   }
 
-  int getId(){
+  public int getId(){
     return this.id;
   }
 
-  double getBalance(){
+  public double getBalance(){
     return this.balance;
   }
 
-  Date getDateCreated(){
+  public Date getDateCreated(){
     return this.dateCreated;
   }
 
-  void setId(int id){
+  public void setId(int id){
     this.id = id;
   }
 
-  void setBalance(double balance){
+  public void setBalance(double balance){
     this.balance = balance;
   }
 
-  double withdraw(double amount){
+  public double withdraw(double amount){
     this.balance = this.balance - amount;
     return this.balance;
   }
 
-  double deposit(double amount){
+  public double deposit(double amount){
     this.balance = this.balance + amount;
     return this.balance;
   }
@@ -48,31 +48,31 @@ class Account{
 }
 
 class SavingsAccount extends Account{
-  public double annualInterestRate;
+  private double annualInterestRate;
   SavingsAccount(int id, double balance, double annualInterestRate){
     super(id, balance);
     this.annualInterestRate = annualInterestRate;
   }
 
-  double getMonthlyInterestRate(){
+  public double getMonthlyInterestRate(){
     double returnVal = (this.annualInterestRate / 100)/12;
     return returnVal;
   }
 
-  double getMonthlyInterest(){
+  public double getMonthlyInterest(){
     double returnVal = this.balance * getMonthlyInterestRate();
     return returnVal;
   }
 }
 
 class CheckingAccount extends Account{
-  public double overdraft;
+  private double overdraft;
   CheckingAccount(int id, double balance, double overdraft){
     super(id, balance);
     this.overdraft = overdraft;
   }
 
-  double getOverdraft(){
+  public double getOverdraft(){
     return this.overdraft;
   }
 }
@@ -116,21 +116,40 @@ public class Main{
             switch (currPrompt){
               case 1:
                 outValue = currAccountObj.getBalance();
-                System.out.println("Current balance of account with id " + accountId + " is " + outValue);
+                System.out.println("Current balance of account with id " + accountId + " is " + String.format("%.2f", outValue));
+                if(currAccountObj instanceof SavingsAccount){
+                   double monthlyInt = ((SavingsAccount) currAccountObj).getMonthlyInterest();
+                   System.out.println("You will get a montly interest of " + String.format("%.2f", monthlyInt));
+                }
                 currPrompt = getPrompt();
               break;
               case 2:
+                double amountAvailable = currAccountObj.getBalance();
                 Scanner myScanner = new Scanner(System.in);
                 System.out.println("How much would you like to withdraw?");
-                outValue = currAccountObj.withdraw(myScanner.nextDouble());
-                System.out.println("Current balance of account with id " + accountId + " after withdrawing money is " + outValue);
-                currPrompt = getPrompt();
+                double withdrawAmount = myScanner.nextDouble();
+                if(currAccountObj instanceof CheckingAccount){
+                  amountAvailable = amountAvailable + ((CheckingAccount) currAccountObj).getOverdraft();
+                }
+
+                if (withdrawAmount > amountAvailable){
+                  System.out.println("Cannot withdraw this much. Only " + String.format("%.2f", amountAvailable) + " is available for withdrawel.");
+                  currPrompt = getPrompt();
+                }
+                else {
+                  outValue = currAccountObj.withdraw(withdrawAmount);
+                  if (outValue < 0){
+                    System.out.println("You still have " + String.format( "%.2f", (amountAvailable - withdrawAmount)) + " left in your overdraft.");
+                  }
+                  System.out.println("Current balance of account with id " + accountId + " after withdrawing money is " + String.format("%.2f", outValue));
+                  currPrompt = getPrompt();
+                }
               break;
               case 3:
                 Scanner myScanner2 = new Scanner(System.in);
                 System.out.println("How much would you like to deposit?");
                 outValue = currAccountObj.deposit(myScanner2.nextDouble());
-                System.out.println("Current balance of account with id " + accountId + " after depositing money is " + outValue);
+                System.out.println("Current balance of account with id " + accountId + " after depositing money is " + String.format("%.2f", outValue));
                 currPrompt = getPrompt();
               break;
               case 4:
