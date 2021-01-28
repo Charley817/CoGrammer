@@ -1,0 +1,62 @@
+The create table query creates the users table with the users' details including
+password and token fields. The token field can be left out if JWT or similar
+technology is used. This is for a self-generated token.
+
+CREATE TABLE users(
+  id INT PRIMARY KEY NOT NULL,
+  name CHAR(50) NOT NULL,
+  email CHAR(50) NOT NULL,
+  password CHAR(100) NOT NULL,
+  Token CHAR(100) NOT NULL
+);
+
+
+The create table query creates the babybag table with all the essential inventory
+items in a babybag. It has a foreign key that connect with the users table.
+
+CREATE TABLE babybag(
+  id INT PRIMARY KEY NOT NULL,
+  userid INT NOT NULL,
+  clothes BOOLEAN,
+  towel BOOLEAN,
+  washcloth BOOLEAN,
+  pacifier BOOLEAN,
+  blanket BOOLEAN,
+  toiletries BOOLEAN,
+  diapers BOOLEAN,
+  wetwipes BOOLEAN,
+  CONSTRAINT fk_userBaby
+    FOREIGN KEY(userid)
+      REFERENCES users(id)
+);
+
+
+Select query used to return a specific user based on their id
+
+SELECT * FROM users
+WHERE id='1'
+
+
+Select query used to return all the babybag fields of a specific user
+
+SELECT * FROM babybag
+WHERE userid = '1'
+
+
+Insert query used to insert a new user (register)
+
+INSERT INTO users(id, name, email, password, token)
+VALUES('1', 'Charlotte', 'charlojacobs817@gmail.com', '123456', 'randomstring12345')
+
+
+Insert query used to insert initial values of babybag
+
+INSERT INTO babybag(id, userid, clothes, towel, washcloth, pacifier, blanket, toiletries, diapers, wetwipes)
+VALUES('1', '1', '0', '0', '0', '0', '0', '0', '0', '0')
+
+
+Update query used to update if clothes, blanket and diapers is checked off the list
+
+UPDATE babybag
+SET clothes = '1', blanket = '1', diapers ='1'
+WHERE userid = '1';

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Baby bag essentials</title>
+  </head>
+  <body>
+    <div id="react-container"></div>
+
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
+    <script type="text/babel">
+
+    //I would have used a prop with the babybag list of items from the db which I wanted to display and make it possible to tick items already packed
+    
+
+      class BabybagList extends React.Component{
+        render(){
+          return (
+            <div>
+              <h1>
+                Essential items in a baby bag
+              </h1>
+            </div>
+          );
+        }
+      }
+
+      ReactDOM.render(
+        <BabybagList />,
+        document.getElementById("react-container")
+      );
+    </script>
+  </body>
+</html>
